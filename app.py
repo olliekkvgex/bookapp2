@@ -1,32 +1,54 @@
 import streamlit as st
 import requests
+import json
 
 # --- CONFIGURATION ---
 GROQ_API_KEY = "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"
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL_NAME = "llama-3.1-8b-instant"
 
-# --- APP SESSION STATE (Memory for Custom Genres) ---
+# --- APP SESSION STATE ---
 if "custom_categories" not in st.session_state:
-    # Starter examples based on your previous list
     st.session_state.custom_categories = [
         {"name": "Missing Folk", "desc": "Stories involving disappearances and the search for people."},
-        {"name": "Messed Up Families", "desc": "Focuses on complex, toxic, or dramatic family secrets and relationships."}
+        {"name": "Messed Up Families", "desc": "Focuses on complex, toxic, or dramatic family secrets."}
     ]
 
 # --- SIDEBAR: GENRE MANAGER ---
 with st.sidebar:
     st.header("🛠️ Bespoke Genre Builder")
-    st.write("Define your custom categories:")
     
+    # --- SECTION: ADD NEW ---
     with st.form("new_genre_form", clear_on_submit=True):
         new_name = st.text_input("Genre Name")
         new_desc = st.text_area("Description")
-        add_btn = st.form_submit_button("Add to List")
-        
-        if add_btn and new_name and new_desc:
+        if st.form_submit_button("Add to List") and new_name and new_desc:
             st.session_state.custom_categories.append({"name": new_name, "desc": new_desc})
             st.rerun()
+
+    st.write("---")
+    
+    # --- SECTION: SAVE & LOAD (The Free Database) ---
+    st.subheader("💾 Save & Load")
+    
+    # 1. Download genres
+    genre_data = json.dumps(st.session_state.custom_categories)
+    st.download_button(
+        label="Download My Genres",
+        data=genre_data,
+        file_name="my_bespoke_genres.json",
+        mime="application/json",
+        help="Saves your current list to your computer."
+    )
+    
+    # 2. Upload genres
+    uploaded_file = st.file_uploader("Upload Saved Genres", type="json")
+    if uploaded_file is not None:
+        try:
+            st.session_state.custom_categories = json.load(uploaded_file)
+            st.success("Genres Loaded!")
+        except:
+            st.error("Invalid file format.")
 
     if st.button("🗑️ Clear All & Reset"):
         st.session_state.custom_categories = []
@@ -55,7 +77,6 @@ if isbn:
         book_data = res[book_key]
         title = book_data.get('title', 'Unknown Title')
         
-        # Safe subject extraction
         raw_subjects = book_data.get('subjects', [])
         subject_names = [s.get('name') if isinstance(s, dict) else str(s) for s in raw_subjects]
         clean_subjects = ", ".join(subject_names[:10])
@@ -67,24 +88,17 @@ if isbn:
         # --- STEP 2: PARSED AI CLASSIFICATION ---
         st.markdown("---")
         if not st.session_state.custom_categories:
-            st.warning("Please add custom genres in the sidebar to begin analysis.")
+            st.warning("Please add custom genres in the sidebar.")
         else:
-            with st.spinner("🧠 Categorizing against your bespoke rules..."):
+            with st.spinner("🧠 Categorizing..."):
                 genre_guide = "\n".join([f"- {c['name']}: {c['desc']}" for c in st.session_state.custom_categories])
                 
                 headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                
                 data = {
                     "model": MODEL_NAME,
                     "messages": [
-                        {
-                            "role": "system", 
-                            "content": f"You are a book expert. Use ONLY these custom genres: \n{genre_guide}"
-                        },
-                        {
-                            "role": "user", 
-                            "content": f"Book: {title}. Themes: {clean_subjects}. \n\nIMPORTANT: Respond ONLY in this exact format: \nPRIMARY: [Genre Name] \nSECONDARY: [Genre Name] \nWHY: [Detailed reasoning based on the bespoke descriptions provided]"
-                        }
+                        {"role": "system", "content": f"Use ONLY these custom genres: \n{genre_guide}"},
+                        {"role": "user", "content": f"Book: {title}. Themes: {clean_subjects}. \n\nRespond ONLY in this exact format: \nPRIMARY: [Genre Name] \nSECONDARY: [Genre Name] \nWHY: [Reasoning]"}
                     ],
                     "temperature": 0.1
                 }
@@ -93,8 +107,6 @@ if isbn:
                 
                 if response.status_code == 200:
                     output = response.json()['choices'][0]['message']['content']
-                    
-                    # Split the output into lines and display them formatted
                     lines = output.strip().split("\n")
                     for line in lines:
                         if ":" in line:
@@ -102,9 +114,9 @@ if isbn:
                             st.subheader(label.strip())
                             st.write(content.strip())
                 else:
-                    st.error(f"AI Error ({response.status_code}). Please check your Groq API Key.")
+                    st.error(f"AI Error ({response.status_code})")
     else:
-        st.error(f"ISBN {isbn} not found in Open Library.")
+        st.error(f"ISBN {isbn} not found.")
 
 st.markdown("---")
-st.caption("Custom Classifier Stable | April 2026")
+st.caption("Custom Classifier | Stable 2026")
