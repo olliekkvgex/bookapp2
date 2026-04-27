@@ -119,4 +119,4 @@ if isbn:
         st.error(f"ISBN {isbn} not found.")
 
 st.markdown("---")
-st.caption("Custom Classifier | Stable 2026")
+st.caption("DEMO | v0.1.1")
