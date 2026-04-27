@@ -60,8 +60,9 @@ with st.sidebar:
         st.caption(f"• **{cat['name']}**")
 
 # --- MAIN APP UI ---
-st.set_page_config(page_title="Book Detective", page_icon="🕵️‍♀️")
-st.title("🕵️‍♀️ Book Detective")
+st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="🕵️‍♀️")
+st.title("🕵️‍♀️ ANUBIS")
+st.subtitle("Book Detective")
 
 # --- STEP 1: ISBN INPUT ---
 raw_isbn = st.text_input("Enter ISBN-13:", placeholder="9780141036144")
