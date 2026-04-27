@@ -60,7 +60,7 @@ with st.sidebar:
         st.caption(f"• **{cat['name']}**")
 
 # --- MAIN APP UI ---
-st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="🕵️‍♀️")
+st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="Anubis.png")
 st.title("🕵 ANUBIS - Book Detective")
 
 # --- STEP 1: ISBN INPUT ---
