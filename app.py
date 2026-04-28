@@ -16,7 +16,7 @@ if "custom_categories" not in st.session_state:
 
 # --- SIDEBAR: GENRE MANAGER ---
 with st.sidebar:
-    st.image("logo.png", width=150)
+    st.image("logo.png")
     st.header("🛠️ Bespoke Genre Builder")
     
     # --- SECTION: ADD NEW ---
