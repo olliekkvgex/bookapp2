@@ -7,6 +7,10 @@ GROQ_API_KEY = "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"
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL_NAME = "llama-3.1-8b-instant"
 
+# --- NAVIGATION ---
+# This creates the "Page" selector at the top of the sidebar
+page = st.sidebar.radio("Navigation", ["Genre Detective", "About Us"])
+
 # --- APP SESSION STATE ---
 if "custom_categories" not in st.session_state:
     st.session_state.custom_categories = [
