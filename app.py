@@ -131,14 +131,13 @@ elif page == "About Us":
     
     st.markdown("""
     ### Our Mission
-    Traditional book genres are often too broad. **Genre Detective** was built to give readers 
-    and librarians the power to define their own hyper-specific categories and use AI to 
+    Traditional book genres are often too broad. **Anubis** was built to give readers the power to define their own hyper-specific categories and to 
     instantly see where a book fits.
     
     ### How it Works
     1. **Define:** Create your own bespoke genres in the sidebar.
     2. **Analyze:** Enter an ISBN to fetch data from the *Open Library API*.
-    3. **Categorize:** Our Llama 3.1 AI (powered by *Groq*) analyzes the book's themes against your specific definitions.
+    3. **Categorise:** Anubis analyses the book's themes against your specific definitions.
     
     ### Privacy
     We don't store your data. Your custom genres belong to you—use the **Download** feature 
