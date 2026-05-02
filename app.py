@@ -25,9 +25,37 @@ if "custom_categories" not in st.session_state:
 # --- SIDEBAR: GENRE MANAGER ---
 with st.sidebar:
     st.image("logo.png")
-    st.header("🛠️ Bespoke Genre Builder")
+    st.header("🛠️ Genre Settings")
+
+    # --- NEW SECTION: PRE-DEFINED GENRE PACKS ---
+    st.subheader("📚 Genre Packs")
+    # List your filenames here exactly as they appear on GitHub
+    packs = {
+        "Custom (Manual)": None,
+        "Classic Genres": "classic_genres.json",
+        "Noir & Thriller": "thriller_specialist.json",
+        "Sci-Fi/Fantasy": "speculative_pack.json"
+    }
     
-    # Section: Add New Genre
+    selected_pack = st.selectbox("Load a Genre Pack:", list(packs.keys()))
+    
+    if st.button("Apply Pack"):
+        pack_file = packs[selected_pack]
+        if pack_file:
+            try:
+                with open(pack_file, "r") as f:
+                    st.session_state.custom_categories = json.load(f)
+                st.success(f"Loaded {selected_pack}!")
+                st.rerun()
+            except FileNotFoundError:
+                st.error(f"File {pack_file} not found on server.")
+        else:
+            st.info("Manual mode active.")
+
+    st.write("---")
+    st.header("➕ Add Bespoke Genre")
+    
+    # (The rest of your form, download, and upload code remains below)
     with st.form("new_genre_form", clear_on_submit=True):
         new_name = st.text_input("Genre Name")
         new_desc = st.text_area("Description")
