@@ -1,34 +1,18 @@
 import streamlit as st
 import requests
 import json
-import cv2
-import numpy as np
-from pyzbar.pyzbar import decode
-from PIL import Image
 
 # --- CONFIGURATION ---
 GROQ_API_KEY = "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"
 API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL_NAME = "llama-3.1-8b-instant"
 
-# --- HELPER: BARCODE DECODER ---
-def decode_barcode(image_file):
-    img = Image.open(image_file)
-    img_array = np.array(img)
-    detected_barcodes = decode(img_array)
-    if not detected_barcodes:
-        return None
-    for barcode in detected_barcodes:
-        isbn_data = barcode.data.decode("utf-8")
-        if isbn_data:
-            return isbn_data
-    return None
-
 # --- APP SETUP ---
-# Move set_page_config to the very top to avoid errors
+# Must be the very first Streamlit command
 st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="Anubis.png")
 
 # --- NAVIGATION ---
+# Page selector at the top of the sidebar
 page = st.sidebar.radio("Navigation", ["Genre Detective", "About Us"])
 
 # --- APP SESSION STATE ---
@@ -43,6 +27,7 @@ with st.sidebar:
     st.image("logo.png")
     st.header("🛠️ Bespoke Genre Builder")
     
+    # Section: Add New Genre
     with st.form("new_genre_form", clear_on_submit=True):
         new_name = st.text_input("Genre Name")
         new_desc = st.text_area("Description")
@@ -51,8 +36,11 @@ with st.sidebar:
             st.rerun()
 
     st.write("---")
+    
+    # Section: Save & Load
     st.subheader("💾 Save & Load")
     
+    # 1. Download genres to JSON
     genre_data = json.dumps(st.session_state.custom_categories)
     st.download_button(
         label="Download My Genres",
@@ -62,6 +50,7 @@ with st.sidebar:
         help="Saves your current list to your computer."
     )
     
+    # 2. Upload genres from JSON
     uploaded_file = st.file_uploader("Upload Saved Genres", type="json")
     if uploaded_file is not None:
         try:
@@ -79,32 +68,14 @@ with st.sidebar:
     for cat in st.session_state.custom_categories:
         st.caption(f"• **{cat['name']}**")
 
-# --- PAGE 1: THE MAIN APP ---
+# --- PAGE 1: GENRE DETECTIVE (MAIN APP) ---
 if page == "Genre Detective":
     st.image("logo.png", width=150)
     st.title("ANUBIS - Book Detective")
 
-    # --- STEP 1: ISBN INPUT (SCAN OR TYPE) ---
-    st.subheader("🔍 Find Your Book")
-    tab1, tab2 = st.tabs(["📸 Scan Barcode", "⌨️ Type ISBN"])
-    
-    scanned_isbn = None
-    with tab1:
-        img_file = st.camera_input("Point camera at the barcode")
-        if img_file:
-            with st.spinner("Decoding..."):
-                scanned_isbn = decode_barcode(img_file)
-                if scanned_isbn:
-                    st.success(f"Barcode Found: {scanned_isbn}")
-                else:
-                    st.error("No barcode detected. Try better lighting or hold it closer.")
-
-    with tab2:
-        typed_isbn = st.text_input("Enter ISBN-13:", placeholder="9780141036144")
-
-    # Logic to decide which ISBN to use
-    raw_isbn = scanned_isbn if scanned_isbn else typed_isbn
-    isbn = raw_isbn.replace("-", "").replace(" ", "").strip() if raw_isbn else ""
+    # ISBN Input
+    raw_isbn = st.text_input("Enter ISBN-13:", placeholder="9780141036144")
+    isbn = raw_isbn.replace("-", "").replace(" ", "").strip()
 
     if isbn:
         with st.spinner("🔍 Fetching book data..."):
@@ -124,7 +95,7 @@ if page == "Genre Detective":
             if 'cover' in book_data:
                 st.image(book_data['cover'].get('medium', ''), width=150)
 
-            # --- STEP 2: PARSED AI CLASSIFICATION ---
+            # AI Classification Section
             st.markdown("---")
             if not st.session_state.custom_categories:
                 st.warning("Please add custom genres in the sidebar.")
@@ -169,13 +140,14 @@ elif page == "About Us":
     
     ### How it Works
     1. **Define:** Create your own bespoke genres in the sidebar.
-    2. **Scan/Enter:** Use your camera to scan a barcode or enter an ISBN manually.
-    3. **Categorise:** Anubis analyses the book's themes against your specific definitions using Llama 3.1 AI.
+    2. **Analyze:** Enter an ISBN to fetch data from the *Open Library API*.
+    3. **Categorise:** Anubis analyses the book's themes against your specific definitions using AI.
     
     ### Privacy
     We don't store your data. Your custom genres belong to you—use the **Download** feature 
     to keep your library profiles on your own device.
     """)
 
+# Footer (Visible on both pages)
 st.markdown("---")
 st.caption("DEMO | v0.1.1")
