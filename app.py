@@ -29,26 +29,35 @@ with st.sidebar:
     # --- GENRE PACK LOADER ---
     st.subheader("📚 Genre Packs")
     
+    # Dictionary mapping friendly names to filenames
+    packs = {
+        "Manual Mode": None,
+        "Thrillers (Pack 1)": "thriller-pack-1.json"
+    }
+    
+    selected_name = st.selectbox("Choose a Pack:", list(packs.keys()))
+    
     if st.button("Apply Pack"):
-        # Updated filename to match your new file
-        pack_filename = "thriller-pack-1.json"
+        pack_filename = packs[selected_name]
         
-        if os.path.exists(pack_filename):
-            try:
-                with open(pack_filename, "r") as f:
-                    data = json.load(f)
-                
-                # Check if JSON is in the correct format (List of Dicts with 'name')
-                if isinstance(data, list) and len(data) > 0 and 'name' in data[0]:
-                    st.session_state.custom_categories = data
-                    # Success message stays visible because we don't call st.rerun()
-                    st.success("✅ Pack loaded successfully!")
-                else:
-                    st.error("JSON format error: Needs 'name' and 'desc' keys.")
-            except Exception as e:
-                st.error(f"Error loading file: {e}")
+        if pack_filename:
+            if os.path.exists(pack_filename):
+                try:
+                    with open(pack_filename, "r") as f:
+                        data = json.load(f)
+                    
+                    # Validation: Ensure it's a list with 'name' keys
+                    if isinstance(data, list) and len(data) > 0 and 'name' in data[0]:
+                        st.session_state.custom_categories = data
+                        st.success(f"✅ {selected_name} loaded successfully!")
+                    else:
+                        st.error("JSON format error: Needs 'name' and 'desc' keys.")
+                except Exception as e:
+                    st.error(f"Error loading file: {e}")
+            else:
+                st.error(f"File '{pack_filename}' not found in GitHub.")
         else:
-            st.error(f"File '{pack_filename}' not found in GitHub repository.")
+            st.info("Manual Mode: Add your own genres below.")
 
     st.write("---")
     st.header("➕ Add Bespoke Genre")
@@ -119,12 +128,11 @@ if page == "Genre Detective":
                         
                         if response.status_code == 200:
                             output = response.json()['choices'][0]['message']['content']
-                            # Displaying raw AI output clearly
                             st.markdown(output)
                         else:
                             st.error(f"AI Error ({response.status_code})")
                     except KeyError:
-                        st.error("Error building genre guide. Check your JSON format.")
+                        st.error("Genre data error. Please check your JSON format.")
         else:
             st.error(f"ISBN {isbn} not found.")
 
@@ -135,13 +143,12 @@ elif page == "About Us":
     
     st.markdown("""
     ### Our Mission
-    Traditional book genres are often too broad. **Anubis** was built to give readers the power to define their own hyper-specific categories and to 
-    instantly see where a book fits.
+    Traditional book genres are often too broad. **Anubis** was built to give readers the power to define their own hyper-specific categories.
     
     ### How it Works
     1. **Define:** Create your own bespoke genres or load a **Genre Pack** in the sidebar.
-    2. **Analyze:** Enter an ISBN to fetch data from the *Open Library API*.
-    3. **Categorise:** Anubis analyses the book's themes against your specific definitions using AI.
+    2. **Analyze:** Enter an ISBN to fetch data via the *Open Library API*.
+    3. **Categorise:** Anubis analyses themes against your specific definitions using Llama 3.1 AI.
     """)
 
 # Footer
