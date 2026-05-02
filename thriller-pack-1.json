@@ -1,42 +1,42 @@
 [
   {
-    "Genre Name": "Psychological thriller",
-    "Description": "Psychological thrillers delve into the intricate psychological effects of unfolding events, focusing on a deep dive into the human psyche. Key characteristics include mind games, manipulation, moral ambiguity, twisted family or social dynamics, and the use of unreliable narrators."
+    "name": "Psychological thriller",
+    "desc": "Psychological thrillers delve into the intricate psychological effects of unfolding events, focusing on a deep dive into the human psyche. Key characteristics include mind games, manipulation, moral ambiguity, twisted family or social dynamics, and the use of unreliable narrators."
   },
   {
-    "Genre Name": "Crime thriller",
-    "Description": "Crime thrillers revolve around the commission, investigation, or prevention of a crime. These stories are defined by high stakes, the presence of clues and red herrings, an exploration of criminal psychology, action-packed sequences, and a protagonist who is typically a detective or investigator."
+    "name": "Crime thriller",
+    "desc": "Crime thrillers revolve around the commission, investigation, or prevention of a crime. These stories are defined by high stakes, the presence of clues and red herrings, an exploration of criminal psychology, action-packed sequences, and a protagonist who is typically a detective or investigator."
   },
   {
-    "Genre Name": "Mystery thriller",
-    "Description": "Mystery thrillers involve solving a mystery, often centered around murder, through a whodunit structure. Characteristics include intricate plotlines, the presence of multiple suspects, investigative procedures, and a final twist or revelation."
+    "name": "Mystery thriller",
+    "desc": "Mystery thrillers involve solving a mystery, often centered around murder, through a whodunit structure. Characteristics include intricate plotlines, the presence of multiple suspects, investigative procedures, and a final twist or revelation."
   },
   {
-    "Genre Name": "Suspense thriller",
-    "Description": "Suspense thrillers aim to keep readers on the edge of their seats with high tension and drama. They utilize cliffhangers, time constraints, limited information, high emotional stakes, and multiple viewpoints to build intensity."
+    "name": "Suspense thriller",
+    "desc": "Suspense thrillers aim to keep readers on the edge of their seats with high tension and drama. They utilize cliffhangers, time constraints, limited information, high emotional stakes, and multiple viewpoints to build intensity."
   },
   {
-    "Genre Name": "Action thriller",
-    "Description": "Action thrillers deliver excitement through physical action and stunts. They are characterized by a fast pace, high-stakes scenarios, explosive confrontations, resourceful heroes, and villains with significant firepower."
+    "name": "Action thriller",
+    "desc": "Action thrillers deliver excitement through physical action and stunts. They are characterized by a fast pace, high-stakes scenarios, explosive confrontations, resourceful heroes, and villains with significant firepower."
   },
   {
-    "Genre Name": "Spy thriller",
-    "Description": "Spy thrillers revolve around espionage and covert activities. The genre features political intrigue, undercover operations, surveillance, moral quandaries, and global stakes."
+    "name": "Spy thriller",
+    "desc": "Spy thrillers revolve around espionage and covert activities. The genre features political intrigue, undercover operations, surveillance, moral quandaries, and global stakes."
   },
   {
-    "Genre Name": "Legal thriller",
-    "Description": "Legal thrillers focus on lawyers or courtrooms and often involve a major criminal case. Key elements include legal procedures, moral dilemmas, high-stakes trials, the use of legal jargon, and a lawyer serving as the protagonist."
+    "name": "Legal thriller",
+    "desc": "Legal thrillers focus on lawyers or courtrooms and often involve a major criminal case. Key elements include legal procedures, moral dilemmas, high-stakes trials, the use of legal jargon, and a lawyer serving as the protagonist."
   },
   {
-    "Genre Name": "Political thriller",
-    "Description": "Political thrillers involve the complex world of political maneuvering, featuring politicians or those trying to expose them. They explore political corruption, power plays, government secrets, revolutions or coups, and the contrast between public and private personas."
+    "name": "Political thriller",
+    "desc": "Political thrillers involve the complex world of political maneuvering, featuring politicians or those trying to expose them. They explore political corruption, power plays, government secrets, revolutions or coups, and the contrast between public and private personas."
   },
   {
-    "Genre Name": "Medical thriller",
-    "Description": "Medical thrillers focus on medical professionals, diseases, or medical ethics. These narratives incorporate medical jargon, ethical dilemmas, scientific research, hospital settings, and scenarios involving epidemics or pandemics."
+    "name": "Medical thriller",
+    "desc": "Medical thrillers focus on medical professionals, diseases, or medical ethics. These narratives incorporate medical jargon, ethical dilemmas, scientific research, hospital settings, and scenarios involving epidemics or pandemics."
   },
   {
-    "Genre Name": "Techno-thriller",
-    "Description": "Techno-thrillers combine the action of thrillers with complex technological elements. They are defined by advanced technology, cybersecurity, hacking, futuristic settings, and the ethical implications of technological advancement."
+    "name": "Techno-thriller",
+    "desc": "Techno-thrillers combine the action of thrillers with complex technological elements. They are defined by advanced technology, cybersecurity, hacking, futuristic settings, and the ethical implications of technological advancement."
   }
 ]
