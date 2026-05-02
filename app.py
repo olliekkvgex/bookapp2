@@ -32,9 +32,7 @@ with st.sidebar:
     # List your filenames here exactly as they appear on GitHub
     packs = {
         "Custom (Manual)": None,
-        "Classic Genres": "classic_genres.json",
-        "Noir & Thriller": "thriller_specialist.json",
-        "Sci-Fi/Fantasy": "speculative_pack.json"
+        "Thrillers": "thriller-pack-1.json",
     }
     
     selected_pack = st.selectbox("Load a Genre Pack:", list(packs.keys()))
