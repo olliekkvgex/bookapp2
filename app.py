@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import json
+import os
 
 # --- CONFIGURATION ---
 GROQ_API_KEY = "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"
@@ -8,11 +9,9 @@ API_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL_NAME = "llama-3.1-8b-instant"
 
 # --- APP SETUP ---
-# Must be the very first Streamlit command
 st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="Anubis.png")
 
 # --- NAVIGATION ---
-# Page selector at the top of the sidebar
 page = st.sidebar.radio("Navigation", ["Genre Detective", "About Us"])
 
 # --- APP SESSION STATE ---
@@ -27,33 +26,33 @@ with st.sidebar:
     st.image("logo.png")
     st.header("🛠️ Genre Settings")
 
-    # --- NEW SECTION: PRE-DEFINED GENRE PACKS ---
+    # --- GENRE PACK LOADER ---
     st.subheader("📚 Genre Packs")
-    # List your filenames here exactly as they appear on GitHub
-    packs = {
-        "Custom (Manual)": None,
-        "Thrillers": "thriller-pack-1.json",
-    }
-    
-    selected_pack = st.selectbox("Load a Genre Pack:", list(packs.keys()))
     
     if st.button("Apply Pack"):
-        pack_file = packs[selected_pack]
-        if pack_file:
+        # Updated filename to match your new file
+        pack_filename = "thriller-pack-1.json"
+        
+        if os.path.exists(pack_filename):
             try:
-                with open(pack_file, "r") as f:
-                    st.session_state.custom_categories = json.load(f)
-                st.success(f"Loaded {selected_pack}!")
-                st.rerun()
-            except FileNotFoundError:
-                st.error(f"File {pack_file} not found on server.")
+                with open(pack_filename, "r") as f:
+                    data = json.load(f)
+                
+                # Check if JSON is in the correct format (List of Dicts with 'name')
+                if isinstance(data, list) and len(data) > 0 and 'name' in data[0]:
+                    st.session_state.custom_categories = data
+                    # Success message stays visible because we don't call st.rerun()
+                    st.success("✅ Pack loaded successfully!")
+                else:
+                    st.error("JSON format error: Needs 'name' and 'desc' keys.")
+            except Exception as e:
+                st.error(f"Error loading file: {e}")
         else:
-            st.info("Manual mode active.")
+            st.error(f"File '{pack_filename}' not found in GitHub repository.")
 
     st.write("---")
     st.header("➕ Add Bespoke Genre")
     
-    # (The rest of your form, download, and upload code remains below)
     with st.form("new_genre_form", clear_on_submit=True):
         new_name = st.text_input("Genre Name")
         new_desc = st.text_area("Description")
@@ -61,36 +60,12 @@ with st.sidebar:
             st.session_state.custom_categories.append({"name": new_name, "desc": new_desc})
             st.rerun()
 
-    st.write("---")
-    
-    # Section: Save & Load
-    st.subheader("💾 Save & Load")
-    
-    # 1. Download genres to JSON
-    genre_data = json.dumps(st.session_state.custom_categories)
-    st.download_button(
-        label="Download My Genres",
-        data=genre_data,
-        file_name="my_bespoke_genres.json",
-        mime="application/json",
-        help="Saves your current list to your computer."
-    )
-    
-    # 2. Upload genres from JSON
-    uploaded_file = st.file_uploader("Upload Saved Genres", type="json")
-    if uploaded_file is not None:
-        try:
-            st.session_state.custom_categories = json.load(uploaded_file)
-            st.success("Genres Loaded!")
-        except:
-            st.error("Invalid file format.")
-
     if st.button("🗑️ Clear All & Reset"):
         st.session_state.custom_categories = []
         st.rerun()
 
     st.write("---")
-    st.write("**Current Custom Genres:**")
+    st.write("**Active Genres:**")
     for cat in st.session_state.custom_categories:
         st.caption(f"• **{cat['name']}**")
 
@@ -124,33 +99,32 @@ if page == "Genre Detective":
             # AI Classification Section
             st.markdown("---")
             if not st.session_state.custom_categories:
-                st.warning("Please add custom genres in the sidebar.")
+                st.warning("Please load a pack or add genres in the sidebar.")
             else:
                 with st.spinner("🧠 Categorizing..."):
-                    genre_guide = "\n".join([f"- {c['name']}: {c['desc']}" for c in st.session_state.custom_categories])
-                    
-                    headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                    data = {
-                        "model": MODEL_NAME,
-                        "messages": [
-                            {"role": "system", "content": f"Use ONLY these custom genres: \n{genre_guide}"},
-                            {"role": "user", "content": f"Book: {title}. Themes: {clean_subjects}. \n\nRespond ONLY in this exact format: \nPRIMARY: [Genre Name] \nSECONDARY: [Genre Name] \nWHY: [Reasoning]"}
-                        ],
-                        "temperature": 0.1
-                    }
-                    
-                    response = requests.post(API_URL, headers=headers, json=data)
-                    
-                    if response.status_code == 200:
-                        output = response.json()['choices'][0]['message']['content']
-                        lines = output.strip().split("\n")
-                        for line in lines:
-                            if ":" in line:
-                                label, content = line.split(":", 1)
-                                st.subheader(label.strip())
-                                st.write(content.strip())
-                    else:
-                        st.error(f"AI Error ({response.status_code})")
+                    try:
+                        genre_guide = "\n".join([f"- {c['name']}: {c['desc']}" for c in st.session_state.custom_categories])
+                        
+                        headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
+                        data = {
+                            "model": MODEL_NAME,
+                            "messages": [
+                                {"role": "system", "content": f"Use ONLY these custom genres: \n{genre_guide}"},
+                                {"role": "user", "content": f"Book: {title}. Themes: {clean_subjects}. \n\nRespond ONLY in this format: \nPRIMARY: [Genre Name] \nSECONDARY: [Genre Name] \nWHY: [Reasoning]"}
+                            ],
+                            "temperature": 0.1
+                        }
+                        
+                        response = requests.post(API_URL, headers=headers, json=data)
+                        
+                        if response.status_code == 200:
+                            output = response.json()['choices'][0]['message']['content']
+                            # Displaying raw AI output clearly
+                            st.markdown(output)
+                        else:
+                            st.error(f"AI Error ({response.status_code})")
+                    except KeyError:
+                        st.error("Error building genre guide. Check your JSON format.")
         else:
             st.error(f"ISBN {isbn} not found.")
 
@@ -165,15 +139,11 @@ elif page == "About Us":
     instantly see where a book fits.
     
     ### How it Works
-    1. **Define:** Create your own bespoke genres in the sidebar.
+    1. **Define:** Create your own bespoke genres or load a **Genre Pack** in the sidebar.
     2. **Analyze:** Enter an ISBN to fetch data from the *Open Library API*.
     3. **Categorise:** Anubis analyses the book's themes against your specific definitions using AI.
-    
-    ### Privacy
-    We don't store your data. Your custom genres belong to you—use the **Download** feature 
-    to keep your library profiles on your own device.
     """)
 
-# Footer (Visible on both pages)
+# Footer
 st.markdown("---")
 st.caption("DEMO | v0.1.1")
