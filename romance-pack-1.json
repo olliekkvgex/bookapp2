@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Christmas/holiday romance",
+    "desc": "Set at Christmas or over another holiday period, such as New Year or Valentine’s Day. These stories can be cozy and heart-warming, with themes of family, love, hope, and healing."
+  },
+  {
+    "name": "Clean and wholesome romance",
+    "desc": "Focuses on romance with no on-page sex. Characters might only share kisses, or intimate scenes take place behind closed doors. The emphasis is on the emotional relationship and feelings over physicality."
+  },
+  {
+    "name": "Contemporary romance",
+    "desc": "Takes place in the modern day, with a real-world setting. This broad category includes various tropes such as sports, workplace, and billionaire/millionaire romance."
+  },
+  {
+    "name": "Cozy romance",
+    "desc": "Defined by a cozy feeling, setting, or atmosphere. Often set in coffee shops, apothecary shops, or small towns during autumn or winter, these books tend to be low-stakes with an uplifting tone."
+  },
+  {
+    "name": "Fairy-tale romance",
+    "desc": "Focuses on mythology, folklore, or fairy-tales. These romances are often retellings of popular stories or original plots loosely inspired by myths and legends."
+  },
+  {
+    "name": "Fantasy romance",
+    "desc": "Combines fantasy elements with a primary focus on the love story. Characters live in or find themselves in a fantastical or supernatural world, overcoming obstacles to be together."
+  },
+  {
+    "name": "Gothic romance",
+    "desc": "Combines Gothic fiction elements like dark, uncanny locations with romance. Features suspense, danger, and mysterious or brooding love interests who may hide dark secrets."
+  },
+  {
+    "name": "Historical romance",
+    "desc": "Romances taking place in a historical setting. Popular eras include Regency, Viking, medieval, wartime, and Tudor periods."
+  },
+  {
+    "name": "Military romance",
+    "desc": "Features characters in the military or ex-military. Common themes include long-distance separation, high-conflict situations, protective heroes, and adjusting to life back home."
+  },
+  {
+    "name": "New adult (NA) romance",
+    "desc": "Follows characters between the ages of eighteen to their mid-twenties. Explores experiences like college, graduation, living independently, and early career struggles through the lens of a relationship."
+  },
+  {
+    "name": "Paranormal romance",
+    "desc": "Includes elements of the supernatural. The romance usually involves a relationship between a human and a non-human creature such as a vampire, witch, werewolf, or faerie."
+  },
+  {
+    "name": "Romcoms (romantic comedies)",
+    "desc": "Introduces comedy into a romance plot. These books are uplifting and focused on light-hearted themes, ranging from mild quips to outrageously funny plotlines."
+  },
+  {
+    "name": "Sci-fi romance",
+    "desc": "Merges romance with sci-fi elements like futuristic or alien settings. Often includes action, danger, and high stakes set against a developing romantic relationship."
+  },
+  {
+    "name": "Small-town romance",
+    "desc": "Set in a small town with a strong sense of community. Common elements include town gossip, local festivals, neighborhood cafes, and the 'outsider' trope."
+  },
+  {
+    "name": "Young adult (YA) romance",
+    "desc": "Features characters in their mid-to-late teens. Explores coming-of-age themes, first love, crushes, and heartbreak, often with a sweeter tone than adult romance."
+  }
+]
