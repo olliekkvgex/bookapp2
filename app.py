@@ -36,7 +36,8 @@ with st.sidebar:
     # Dictionary mapping friendly names to filenames
     packs = {
         "Manual Mode": None,
-        "Thrillers (Pack 1)": "thriller-pack-1.json"
+        "Thrillers (Pack 1)": "thriller-pack-1.json",
+        "Romance (Pack 1)": "romance-pack-1.json"
     }
     
     selected_name = st.selectbox("Choose a Pack:", list(packs.keys()))
