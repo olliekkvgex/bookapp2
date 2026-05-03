@@ -148,7 +148,7 @@ elif page == "About Us":
     ### How it Works
     1. **Define:** Create your own bespoke genres or load a **Genre Pack** in the sidebar.
     2. **Analyze:** Enter an ISBN to fetch data via the *Open Library API*.
-    3. **Categorise:** Anubis analyses themes against your specific definitions using Llama 3.1 AI.
+    3. **Categorise:** Anubis analyses book data against your *custom definitions* or our pre-built **Genre Packs** 
     """)
 
 # Footer
