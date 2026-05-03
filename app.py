@@ -142,8 +142,8 @@ if page == "Genre Detective":
 
 # --- PAGE 2: ABOUT US ---
 elif page == "About Us":
-    st.title("📖 About Anubis")
-    st.image("logo.png", width=100)
+    st.title("logo.png", "About Anubis")
+    
     
     st.markdown("""
     ### Our Mission
