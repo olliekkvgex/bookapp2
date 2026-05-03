@@ -142,8 +142,17 @@ if page == "Genre Detective":
 
 # --- PAGE 2: ABOUT US ---
 elif page == "About Us":
-    st.title("logo.png", "About Anubis")
-    
+    # Create two columns: one narrow for the logo, one wide for the title
+    # Adjust the numbers [1, 4] to change the ratio of widths
+    col1, col2 = st.columns([1, 5])
+
+    with col1:
+        st.image("logo.png", width=100)
+
+    with col2:
+        # We use a header or a title here. 
+        # Note: st.title sometimes adds extra padding; st.header might align better.
+        st.title("About Anubis")
     
     st.markdown("""
     ### Our Mission
