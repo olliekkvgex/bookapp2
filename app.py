@@ -12,7 +12,11 @@ MODEL_NAME = "llama-3.1-8b-instant"
 st.set_page_config(page_title="ANUBIS - Book Detective", page_icon="Anubis.png")
 
 # --- NAVIGATION ---
-page = st.sidebar.radio("Navigation", ["Genre Detective", "About Us"])
+page = st.sidebar.segmented_control(
+    "Navigation", 
+    ["Genre Detective", "About Us", "Contact"], 
+    default="Genre Detective"
+)
 
 # --- APP SESSION STATE ---
 if "custom_categories" not in st.session_state:
@@ -150,6 +154,15 @@ elif page == "About Us":
     2. **Analyze:** Enter an ISBN to fetch data via the *Open Library API*.
     3. **Categorise:** Anubis analyses book data against your **custom definitions** or our pre-built **Genre Packs** 
     """)
+
+# --- PAGE 3: CONTACT ---
+elif page == "Contact":
+    st.title("Contact Us")
+
+    st.markdown("""
+    ### Get In Touch
+    Fill out the form below and we will be in touch with you as soon as we can!""")
+
 
 # Footer
 st.markdown("---")
