@@ -110,23 +110,47 @@ if page == "Genre Detective":
             if 'cover' in book_data:
                 st.image(book_data['cover'].get('medium', ''), width=150)
 
-            # AI Classification Section
+        # --- IMPROVED AI CLASSIFICATION SECTION ---
             st.markdown("---")
             if not st.session_state.custom_categories:
                 st.warning("Please load a pack or add genres in the sidebar.")
             else:
-                with st.spinner("🧠 Categorizing..."):
+                with st.spinner("🧠 Analyzing themes and matching categories..."):
                     try:
-                        genre_guide = "\n".join([f"- {c['name']}: {c['desc']}" for c in st.session_state.custom_categories])
+                        # Formatting the guide clearly for the AI
+                        genre_guide = "\n".join([f"GENRE: {c['name']}\nDESCRIPTION: {c['desc']}\n---" for c in st.session_state.custom_categories])
                         
                         headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
+                        
+                        # The "System Message" is now much more strict
+                        system_message = f"""You are a professional Book Archivist. 
+                        Your task is to classify books based ONLY on the specific Bespoke Genre definitions provided below. 
+                        
+                        RULES:
+                        1. Carefully read the DESCRIPTION of each genre.
+                        2. Analyze the book title and themes for subtle clues.
+                        3. If a book fits multiple genres, choose the one where the DESCRIPTION most closely matches the primary plot.
+                        4. Do not use standard literary genres unless they are in the list provided.
+                        
+                        BESPOKE GENRE DEFINITIONS:
+                        {genre_guide}"""
+
+                        user_prompt = f"""Please classify the following book:
+                        TITLE: {title}
+                        THEMES/BLURB TAGS: {clean_subjects}
+                        
+                        Respond in this exact format:
+                        PRIMARY: [Insert the Name of the best matching genre]
+                        SECONDARY: [Insert the second best match, or 'None']
+                        WHY: [A concise 2-sentence explanation of why the book's themes match your chosen genre descriptions]"""
+
                         data = {
                             "model": MODEL_NAME,
                             "messages": [
-                                {"role": "system", "content": f"Use ONLY these custom genres: \n{genre_guide}"},
-                                {"role": "user", "content": f"Book: {title}. Themes: {clean_subjects}. \n\nRespond ONLY in this format: \nPRIMARY: [Genre Name] \nSECONDARY: [Genre Name] \nWHY: [Reasoning]"}
+                                {"role": "system", "content": system_message},
+                                {"role": "user", "content": user_prompt}
                             ],
-                            "temperature": 0.1
+                            "temperature": 0.1 # Low temperature ensures consistent, logical choices
                         }
                         
                         response = requests.post(API_URL, headers=headers, json=data)
@@ -137,7 +161,7 @@ if page == "Genre Detective":
                         else:
                             st.error(f"AI Error ({response.status_code})")
                     except KeyError:
-                        st.error("Genre data error. Please check your JSON format.")
+                        st.error("Error building the genre guide. Please ensure your genres have 'name' and 'desc' keys.")
         else:
             st.error(f"ISBN {isbn} not found.")
 
