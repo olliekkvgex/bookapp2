@@ -195,7 +195,7 @@ elif page == "About Us":
     
     Public metadata sources (like Open Library) occasionally include tags that are graphic, explicit, or potentially triggering. ANUBIS automatically scans and removes these specific terms from the "Tags" display. 
     
-    *Note: This does not affect the AI's ability to categorize the book accurately, but it ensures that the raw metadata displayed on your screen remains clean and helpful.*
+    *Note: This does not affect ANUBIS's ability to categorise the book accurately, but it ensures that the raw metadata displayed on your screen remains clean and helpful.*
     """)
 
 # --- PAGE 3: CONTACT ---
