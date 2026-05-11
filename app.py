@@ -102,8 +102,18 @@ if page == "Genre Detective":
             title = book_data.get('title', 'Unknown Title')
             authors = book_data.get('authors', [])
             author_name = authors[0].get('name') if authors else "Unknown Author"
+            
+            # --- BLACKLIST FILTERING ---
+            blacklist = st.secrets.get("TAG_BLACKLIST", [])
             raw_subjects = book_data.get('subjects', [])
-            subject_names = [s.get('name') if isinstance(s, dict) else str(s) for s in raw_subjects]
+            subject_names = []
+            
+            for s in raw_subjects:
+                name = s.get('name') if isinstance(s, dict) else str(s)
+                # Only add if tag does not contain any blacklisted word
+                if not any(bad_word.lower() in name.lower() for bad_word in blacklist):
+                    subject_names.append(name)
+            
             clean_subjects = ", ".join(subject_names[:12])
             notes = book_data.get('notes', "")
 
@@ -172,7 +182,14 @@ elif page == "About Us":
     ### How it Works
     1. **Define:** Create your own bespoke genres or load a **Genre Pack** in the sidebar.
     2. **Analyze:** Enter an ISBN to fetch data via the *Open Library API*.
-    3. **Categorise:** Anubis analyses book data against your **custom definitions** or **Genre Pack** using comparative logic.
+    3. **Categorise:** Anubis analyses book data against your **custom definitions** or our pre-built **Genre Packs** using comparative logic.
+
+    ### 🛡️ Content & Safety
+    To ensure a safe and professional experience for all users, ANUBIS employs a **Tag Filtering System**. 
+    
+    Public metadata sources (like Open Library) occasionally include tags that are graphic, explicit, or potentially triggering. ANUBIS automatically scans and removes these specific terms from the "Tags" display. 
+    
+    *Note: This does not affect the AI's ability to categorize the book accurately, but it ensures that the raw metadata displayed on your screen remains clean and helpful.*
     """)
 
 # --- PAGE 3: CONTACT ---
