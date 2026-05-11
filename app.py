@@ -33,7 +33,6 @@ with st.sidebar:
     # --- GENRE PACK LOADER ---
     st.subheader("📚 Genre Packs")
     
-    # Dictionary mapping friendly names to filenames
     packs = {
         "Manual Mode": None,
         "Thrillers (Pack 1)": "thriller-pack-1.json",
@@ -44,14 +43,11 @@ with st.sidebar:
     
     if st.button("Apply Pack"):
         pack_filename = packs[selected_name]
-        
         if pack_filename:
             if os.path.exists(pack_filename):
                 try:
                     with open(pack_filename, "r") as f:
                         data = json.load(f)
-                    
-                    # Validation: Ensure it's a list with 'name' keys
                     if isinstance(data, list) and len(data) > 0 and 'name' in data[0]:
                         st.session_state.custom_categories = data
                         st.success(f"✅ {selected_name} loaded successfully!")
@@ -60,13 +56,12 @@ with st.sidebar:
                 except Exception as e:
                     st.error(f"Error loading file: {e}")
             else:
-                st.error(f"File '{pack_filename}' not found in GitHub.")
+                st.error(f"File '{pack_filename}' not found.")
         else:
-            st.info("Manual Mode: Add your own genres below.")
+            st.info("Manual Mode active.")
 
     st.write("---")
     st.header("➕ Add Bespoke Genre")
-    
     with st.form("new_genre_form", clear_on_submit=True):
         new_name = st.text_input("Genre Name")
         new_desc = st.text_area("Description")
@@ -83,100 +78,91 @@ with st.sidebar:
     for cat in st.session_state.custom_categories:
         st.caption(f"• **{cat['name']}**")
 
-# --- PAGE 1: GENRE DETECTIVE (MAIN APP) ---
+# --- PAGE 1: GENRE DETECTIVE ---
 if page == "Genre Detective":
-    st.image("logo.png", width=150)
-    st.title("ANUBIS - Book Detective")
+    col_a, col_b = st.columns([1, 4])
+    with col_a:
+        st.image("logo.png", width=80)
+    with col_b:
+        st.title("ANUBIS - Book Detective")
 
-    # ISBN Input
     raw_isbn = st.text_input("Enter ISBN-13:", placeholder="9780141036144")
     isbn = raw_isbn.replace("-", "").replace(" ", "").strip()
 
     if isbn:
-        with st.spinner("🔍 Fetching book data..."):
+        with st.spinner("🔍 Gathering intelligence..."):
             ol_url = f"https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data"
             res = requests.get(ol_url).json()
             book_key = f"ISBN:{isbn}"
         
         if book_key in res:
             book_data = res[book_key]
-            title = book_data.get('title', 'Unknown Title')
             
+            # Metadata Extraction
+            title = book_data.get('title', 'Unknown Title')
+            authors = book_data.get('authors', [])
+            author_name = authors[0].get('name') if authors else "Unknown Author"
             raw_subjects = book_data.get('subjects', [])
             subject_names = [s.get('name') if isinstance(s, dict) else str(s) for s in raw_subjects]
-            clean_subjects = ", ".join(subject_names[:10])
-            
-            st.success(f"📖 Found: **{title}**")
-            if 'cover' in book_data:
-                st.image(book_data['cover'].get('medium', ''), width=150)
+            clean_subjects = ", ".join(subject_names[:12])
+            notes = book_data.get('notes', "")
 
-        # --- IMPROVED AI CLASSIFICATION SECTION ---
             st.markdown("---")
-            if not st.session_state.custom_categories:
-                st.warning("Please load a pack or add genres in the sidebar.")
-            else:
-                with st.spinner("🧠 Analyzing themes and matching categories..."):
-                    try:
-                        # Formatting the guide clearly for the AI
-                        genre_guide = "\n".join([f"GENRE: {c['name']}\nDESCRIPTION: {c['desc']}\n---" for c in st.session_state.custom_categories])
-                        
-                        headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-                        
-                        # The "System Message" is now much more strict
-                        system_message = f"""You are a professional Book Archivist. 
-                        Your task is to classify books based ONLY on the specific Bespoke Genre definitions provided below. 
-                        
-                        RULES:
-                        1. Carefully read the DESCRIPTION of each genre.
-                        2. Analyze the book title and themes for subtle clues.
-                        3. If a book fits multiple genres, choose the one where the DESCRIPTION most closely matches the primary plot.
-                        4. Do not use standard literary genres unless they are in the list provided.
-                        
-                        BESPOKE GENRE DEFINITIONS:
-                        {genre_guide}"""
+            display_col1, display_col2 = st.columns([1, 2])
+            
+            with display_col1:
+                if 'cover' in book_data:
+                    st.image(book_data['cover'].get('large', ''), use_container_width=True)
+                else:
+                    st.info("No cover available.")
+            
+            with display_col2:
+                st.subheader(title)
+                st.write(f"✍️ **Author:** {author_name}")
+                st.caption(f"🏷️ **Tags:** {clean_subjects}")
+                
+                if not st.session_state.custom_categories:
+                    st.warning("Please load a pack in the sidebar.")
+                else:
+                    with st.spinner("🧠 Analyzing..."):
+                        try:
+                            genre_guide = "\n".join([f"GENRE: {c['name']}\nDEF: {c['desc']}" for c in st.session_state.custom_categories])
+                            headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
+                            
+                            system_message = f"""You are a professional Book Archivist. 
+                            Classify ONLY using these definitions:
+                            {genre_guide}"""
 
-                        user_prompt = f"""Please classify the following book:
-                        TITLE: {title}
-                        THEMES/BLURB TAGS: {clean_subjects}
-                        
-                        Respond in this exact format:
-                        PRIMARY: [Insert the Name of the best matching genre]
-                        SECONDARY: [Insert the second best match, or 'None']
-                        WHY: [A concise 2-sentence explanation of why the book's themes match your chosen genre descriptions]"""
+                            user_prompt = f"""BOOK: {title}\nAUTHOR: {author_name}\nTHEMES: {clean_subjects}\nNOTES: {notes}
+                            Format:
+                            PRIMARY: [Genre]
+                            SECONDARY: [Genre]
+                            WHY: [Two sentences max]"""
 
-                        data = {
-                            "model": MODEL_NAME,
-                            "messages": [
-                                {"role": "system", "content": system_message},
-                                {"role": "user", "content": user_prompt}
-                            ],
-                            "temperature": 0.1 # Low temperature ensures consistent, logical choices
-                        }
-                        
-                        response = requests.post(API_URL, headers=headers, json=data)
-                        
-                        if response.status_code == 200:
-                            output = response.json()['choices'][0]['message']['content']
-                            st.markdown(output)
-                        else:
-                            st.error(f"AI Error ({response.status_code})")
-                    except KeyError:
-                        st.error("Error building the genre guide. Please ensure your genres have 'name' and 'desc' keys.")
+                            data = {
+                                "model": MODEL_NAME,
+                                "messages": [
+                                    {"role": "system", "content": system_message},
+                                    {"role": "user", "content": user_prompt}
+                                ],
+                                "temperature": 0.1
+                            }
+                            response = requests.post(API_URL, headers=headers, json=data)
+                            if response.status_code == 200:
+                                st.info(response.json()['choices'][0]['message']['content'])
+                            else:
+                                st.error(f"AI Error ({response.status_code})")
+                        except Exception as e:
+                            st.error(f"Classification failed: {e}")
         else:
             st.error(f"ISBN {isbn} not found.")
 
 # --- PAGE 2: ABOUT US ---
 elif page == "About Us":
-    # Create two columns: one narrow for the logo, one wide for the title
-    # Adjust the numbers [1, 4] to change the ratio of widths
     col1, col2 = st.columns([1, 5])
-
     with col1:
         st.image("logo.png", width=100)
-
     with col2:
-        # We use a header or a title here. 
-        # Note: st.title sometimes adds extra padding; st.header might align better.
         st.title("About Anubis")
     
     st.markdown("""
@@ -186,18 +172,26 @@ elif page == "About Us":
     ### How it Works
     1. **Define:** Create your own bespoke genres or load a **Genre Pack** in the sidebar.
     2. **Analyze:** Enter an ISBN to fetch data via the *Open Library API*.
-    3. **Categorise:** Anubis analyses book data against your **custom definitions** or our pre-built **Genre Packs** 
+    3. **Categorise:** Anubis analyses book data against your **custom definitions** using Llama 3.1 AI.
     """)
 
 # --- PAGE 3: CONTACT ---
 elif page == "Contact":
-    st.title("Contact Us")
-
-    st.markdown("""
-    ### Get In Touch
-    Fill out the form below and we will be in touch with you as soon as we can!""")
-
+    st.title("✉️ Contact Us")
+    st.write("Fill out the form below and we will be in touch shortly!")
+    
+    contact_email = st.secrets["CONTACT_EMAIL"]
+    
+    contact_form = f"""
+    <form action="https://formsubmit.co/{contact_email}" method="POST">
+        <input type="text" name="name" placeholder="Full Name" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;" required>
+        <input type="email" name="email" placeholder="Email Address" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc;" required>
+        <textarea name="message" placeholder="Your Message" style="width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; height: 100px;" required></textarea>
+        <button type="submit" style="background-color: #FF4B4B; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Send Submission</button>
+    </form>
+    """
+    st.markdown(contact_form, unsafe_allow_html=True)
 
 # Footer
 st.markdown("---")
-st.caption("DEMO | v0.1.1")
+st.caption("ANUBIS | DEMO v0.1.1")
