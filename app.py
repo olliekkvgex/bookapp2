@@ -117,6 +117,12 @@ if page == "Genre Detective":
             clean_subjects = ", ".join(subject_names[:12])
             notes = book_data.get('notes', "")
 
+            with st.expander("🛠️ Metadata Debugger (Testers Only)"):
+                st.write("**All Raw Tags found by Open Library:**")
+                st.write(raw_subjects) # Shows the original messy data
+                st.write("**Tags after Blacklist Filtering:**")
+                st.write(subject_names) # Shows what remained after your filter
+
             st.markdown("---")
             display_col1, display_col2 = st.columns([1, 2])
             
