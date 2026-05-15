@@ -36,7 +36,8 @@ with st.sidebar:
     packs = {
         "Manual Mode": None,
         "Thrillers (Pack 1)": "thriller-pack-1.json",
-        "Romance (Pack 1)": "romance-pack-1.json"
+        "Romance (Pack 1)": "romance-pack-1.json",
+        "Horror (Pack 1)": "horror-pack-1.json"
     }
     
     selected_name = st.selectbox("Choose a Pack:", list(packs.keys()))
