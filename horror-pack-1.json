@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Demonic Possession",
+    "desc": "Focuses on the unknown of the human experience involving entities that represent evil in mythical, religious, or supernatural forms. The plot typically centers on an ancient or supernatural force taking control of a human host."
+  },
+  {
+    "name": "Paranormal",
+    "desc": "Centers on non-living beings such as spirits and ghosts that create fear without a constant physical presence. Elements include unexplained movements of objects, sudden atmospheric chills, and supernatural powers."
+  },
+  {
+    "name": "Monster",
+    "desc": "Features antagonists such as vampires, aliens, or giant creatures that can wreak havoc on entire communities. These beings use their immense strength, size, and predatory nature to destroy and terrorize everything in their path."
+  },
+  {
+    "name": "Slasher",
+    "desc": "Focuses on human villains, typically serial killers, who stalk and murder their victims. These stories often feature high body counts and masked antagonists, creating terror through a sense of proximity to reality."
+  },
+  {
+    "name": "Zombie",
+    "desc": "Combines elements of monster and possession genres, featuring cannibalistic, corpse-like characters. These antagonists are difficult to kill, often appearing in post-apocalyptic settings where they can infect victims with a single bite."
+  },
+  {
+    "name": "Gore (Splatter)",
+    "desc": "Relies heavily on the portrayal of graphic violence, including blood, guts, and significant body trauma. This genre emphasizes special effects to depict the disfigurement and dismemberment of characters in a gratuitous manner."
+  },
+  {
+    "name": "Witchcraft",
+    "desc": "Draws from folklore and the use of magic to cast spells. Like the paranormal genre, it utilizes supernatural elements to create fear, often focusing on victims being turned into tortured beings through occult practices."
+  },
+  {
+    "name": "Vampire",
+    "desc": "Evolved from ghost stories of the dead returning to haunt the living. These narratives focus on the transformation of humans into immortal beings that must feed on the essence of others to survive."
+  },
+  {
+    "name": "Psychological",
+    "desc": "Focuses on creating a sense of paranoia and mental unease rather than relying on visual shocks. The stories often feature mentally unstable or emotionally disturbed characters, playing tricks on the audience's mind to influence their emotional state."
+  },
+  {
+    "name": "Comedic",
+    "desc": "A subgenre that balances humor with scares, taking the audience to opposite ends of the emotional spectrum. It often parodies traditional horror tropes while still maintaining elements of tension and fright."
+  }
+]
